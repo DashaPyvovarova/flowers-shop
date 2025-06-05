@@ -9,7 +9,7 @@ import AppHeader from 'components/AppHeader';
 import { auth } from 'lib/auth';
 
 export const metadata: Metadata = {
-  title: 'Fit',
+  title: 'Flower Shop - Купуй квіти, щоб радіти життю ще більше',
 };
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {

@@ -19,21 +19,24 @@ export default function HomePage() {
   const [categories, setCategories] = useState<FlowerCategory[]>([]);
   const [reviews, setReviews] = useState<ReviewWithDetails[]>([]);
 
+  const [loadingFlowers, setLoadingFlowers] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
   useEffect(() => {
-    const load = async () => {
+    const loadFlowersAndCategories = async () => {
       const [fetchedFlowers, fetchedCategories] = await Promise.all([
         getFlowers(),
         getFlowerCategories(),
       ]);
       setFlowers(fetchedFlowers.slice(0, 6));
       setCategories(fetchedCategories);
+      setLoadingFlowers(false);
+      setLoadingCategories(false);
     };
-    load();
-  }, []);
 
-  useEffect(() => {
-    const load = async () => {
-      const [fetchedFlowers, fetchedCategories, fetchedReviews, users] = await Promise.all([
+    const loadReviews = async () => {
+      const [fetchedFlowers, , fetchedReviews, users] = await Promise.all([
         getFlowers(),
         getFlowerCategories(),
         getReviews(),
@@ -49,12 +52,12 @@ export default function HomePage() {
         userName: userMap.get(r.userId) || 'Анонім',
       }));
 
-      setFlowers(fetchedFlowers.slice(0, 6));
-      setCategories(fetchedCategories);
       setReviews(reviewsWithDetails);
+      setLoadingReviews(false);
     };
 
-    load();
+    loadFlowersAndCategories();
+    loadReviews();
   }, []);
 
   return (
@@ -71,62 +74,81 @@ export default function HomePage() {
 
       <section>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">🌼 Популярні квіти</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {
-            flowers.map((flower) => (
-              <div key={ flower.id } className="bg-white rounded-2xl shadow-md overflow-hidden">
-                <IKImage
-                  urlEndpoint={ `${config.env.imagekit.urlEndpoint}/flowers` }
-                  path={ flower.image as string }
-                  alt={ flower.name }
-                  width={ 500 }
-                  height={ 500 }
-                  className="w-full h-76 object-cover"
-                />
-                <div className="p-4 space-y-1">
-                  <h3 className="text-lg font-semibold text-gray-800">{ flower.name }</h3>
-                  <p className="text-sm text-gray-600">{ flower.description?.slice(0, 60) }...</p>
-                  <div className="text-pink-600 font-bold mt-2">{ flower.price } грн</div>
-                </div>
-              </div>
-            ))
-          }
-        </div>
+        {
+          loadingFlowers ? (
+            <p className="text-center text-gray-500">Завантаження квітів...</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {
+                flowers.map((flower) => (
+                  <div key={ flower.id } className="bg-white rounded-2xl shadow-md overflow-hidden">
+                    <IKImage
+                      urlEndpoint={ `${config.env.imagekit.urlEndpoint}/flowers` }
+                      path={ flower.image as string }
+                      alt={ flower.name }
+                      width={ 500 }
+                      height={ 500 }
+                      className="w-full h-76 object-cover"
+                    />
+                    <div className="p-4 space-y-1">
+                      <h3 className="text-lg font-semibold text-gray-800">{ flower.name }</h3>
+                      <p className="text-sm text-gray-600">{ flower.description?.slice(0, 60) }...</p>
+                      <div className="text-pink-600 font-bold mt-2">{ flower.price } грн</div>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          )
+        }
       </section>
 
       <section>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">🌷 Наявні категорії</h2>
-        <div className="flex flex-wrap gap-4 justify-center">
-          {
-            categories.map((category) => (
-              <p key={ category.id } className="bg-white px-5 py-2 rounded shadow text-m font-medium text-pink-700">
-                { category.name }
-              </p>
-            ))
-          }
-        </div>
+        {
+          loadingCategories ? (
+            <p className="text-center text-gray-500">Завантаження категорій...</p>
+          ) : (
+            <div className="flex flex-wrap gap-4 justify-center">
+              {
+                categories.map((category) => (
+                  <p key={ category.id } className="bg-white px-5 py-2 rounded shadow text-m font-medium text-pink-700">
+                    { category.name }
+                  </p>
+                ))
+              }
+            </div>
+          )
+        }
       </section>
 
       <section>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">💬 Відгуки клієнтів</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {
-            reviews.map((review) => (
-              <div key={ review.id } className="bg-white p-5 rounded-2xl shadow-md border">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-700">{ review.userName }</span>
-                  <span className="text-yellow-500 font-bold">
-                    { '★'.repeat(review.rating) }{ '☆'.repeat(5 - review.rating) }
-                  </span>
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
+        {
+          loadingReviews ? (
+            <p className="text-center text-gray-500">Завантаження відгуків...</p>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {
+                reviews.map((review) => (
+                  <div key={ review.id } className="bg-white p-5 rounded-2xl shadow-md border">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-semibold text-gray-700">{ review.userName }</span>
+                      <span className="text-yellow-500 font-bold">
+                        { '★'.repeat(review.rating) }
+                        { '☆'.repeat(5 - review.rating) }
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 mb-2">
                   Квітка: <span className="font-medium text-gray-800">{ review.flowerName }</span>
-                </div>
-                <p className="text-gray-700 text-sm">{ review.comment }</p>
-              </div>
-            ))
-          }
-        </div>
+                    </div>
+                    <p className="text-gray-700 text-sm">{ review.comment }</p>
+                  </div>
+                ))
+              }
+            </div>
+          )
+        }
       </section>
     </main>
   );
