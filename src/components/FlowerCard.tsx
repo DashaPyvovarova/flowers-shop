@@ -1,3 +1,5 @@
+import { IKImage } from 'imagekitio-next';
+import { config } from 'config/config';
 import { Flower } from 'lib/api/flowers';
 
 type FlowerCardProps = {
@@ -8,7 +10,14 @@ type FlowerCardProps = {
 export default function FlowerCard({ flower, onAdd }: FlowerCardProps) {
   return (
     <div className="border rounded p-4 shadow hover:shadow-lg transition cursor-pointer flex flex-col">
-      <img src={ flower.image as string } alt={ flower.name } className="w-full h-48 object-cover rounded" />
+      <IKImage
+        urlEndpoint={ `${config.env.imagekit.urlEndpoint}/flowers` }
+        path={ flower.image as string }
+        alt={ flower.name }
+        width={ 260 }
+        height={ 200 }
+        className="w-full h-48 object-cover rounded"
+      />
       <h3 className="mt-2 text-lg font-semibold">{ flower.name }</h3>
       <p className="text-gray-600 flex-grow">{ flower.description }</p>
       <div className="mt-2 flex justify-between items-center">
