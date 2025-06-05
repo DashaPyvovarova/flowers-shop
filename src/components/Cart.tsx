@@ -10,7 +10,7 @@ const Cart = ({ items, onConfirm, onRemove }: CartProps) => {
   const total = items.reduce((sum, item) => sum + +item.flower.price * item.quantity, 0).toFixed(2);
 
   return (
-    <div className="p-4 border rounded shadow max-w-md w-full">
+    <div className="p-4 rounded shadow max-w-md w-full">
       <h2 className="text-xl font-semibold mb-4">Ваше замовлення</h2>
       { items.length === 0 && <p>Кошик порожній</p> }
       {
