@@ -74,6 +74,7 @@ module.exports = {
         },
       },
     ],
+    'linebreak-style': 0,
     '@typescript-eslint/comma-dangle': ['error', 'always-multiline'],
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
