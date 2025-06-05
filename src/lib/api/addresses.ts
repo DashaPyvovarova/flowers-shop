@@ -1,3 +1,5 @@
+import { getUserById } from './users';
+
 const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || ''}/api/addresses`;
 
 export type Address = {
@@ -31,6 +33,15 @@ export async function getAddressById(id: string): Promise<Address> {
     return await res.json();
   } catch {
     throw new Error('Failed to get address');
+  }
+}
+
+export async function getAddressByUserId(userId: string): Promise<Address | null> {
+  try {
+    const addresses = await getAddresses();
+    return addresses.find(address => address.userId === userId) || null;
+  } catch {
+    throw new Error('Не вдалося отримати адресу користувача');
   }
 }
 
