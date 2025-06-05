@@ -6,7 +6,7 @@ import CategoriesTab from '../../components/admin/CategoriesTab/CategoriesTab';
 import FlowersTab from 'components/admin/FlowersTab/FlowersTab';
 import OrdersTab from 'components/admin/OrdersTab';
 import ReviewsTab from 'components/admin/ReviewsTab';
-import UsersTab from 'components/admin/UsersTab';
+import UsersTab from 'components/admin/UsersTab/UsersTab';
 
 type Tab = 'flowers' | 'categories' | 'users' | 'reviews' | 'orders';
 
