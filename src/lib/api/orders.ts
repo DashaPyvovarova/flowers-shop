@@ -35,6 +35,11 @@ export async function getOrderById(id: string): Promise<Order> {
   }
 }
 
+export async function getOrdersByUserId(userId: string): Promise<Order[]> {
+  const orders = await getOrders();
+  return orders.filter((order) => order.userId === userId);
+}
+
 export async function createOrder(data: CreateOrderDTO): Promise<Order> {
   try {
     const res = await fetch(BASE_URL, {
