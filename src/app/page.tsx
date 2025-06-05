@@ -6,10 +6,18 @@ import { useEffect, useState } from 'react';
 import { config } from '../config/config';
 import { FlowerCategory, getFlowerCategories } from 'lib/api/flowerCategories';
 import { getFlowers, Flower } from 'lib/api/flowers';
+import { getReviews, Review } from 'lib/api/reviews';
+import { getUsers } from 'lib/api/users';
+
+type ReviewWithDetails = Review & {
+  flowerName: string;
+  userName: string;
+};
 
 export default function HomePage() {
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [categories, setCategories] = useState<FlowerCategory[]>([]);
+  const [reviews, setReviews] = useState<ReviewWithDetails[]>([]);
 
   useEffect(() => {
     const load = async () => {
@@ -20,6 +28,32 @@ export default function HomePage() {
       setFlowers(fetchedFlowers.slice(0, 6));
       setCategories(fetchedCategories);
     };
+    load();
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      const [fetchedFlowers, fetchedCategories, fetchedReviews, users] = await Promise.all([
+        getFlowers(),
+        getFlowerCategories(),
+        getReviews(),
+        getUsers(),
+      ]);
+
+      const flowerMap = new Map(fetchedFlowers.map((f) => [f.id, f.name]));
+      const userMap = new Map(users.map((u) => [u.id, u.login || u.email]));
+
+      const reviewsWithDetails = fetchedReviews.slice(0, 5).map((r) => ({
+        ...r,
+        flowerName: flowerMap.get(r.flowerId) || 'Невідома квітка',
+        userName: userMap.get(r.userId) || 'Анонім',
+      }));
+
+      setFlowers(fetchedFlowers.slice(0, 6));
+      setCategories(fetchedCategories);
+      setReviews(reviewsWithDetails);
+    };
+
     load();
   }, []);
 
@@ -68,6 +102,28 @@ export default function HomePage() {
               <p key={ category.id } className="bg-white px-5 py-2 rounded shadow text-m font-medium text-pink-700">
                 { category.name }
               </p>
+            ))
+          }
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">💬 Відгуки клієнтів</h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {
+            reviews.map((review) => (
+              <div key={ review.id } className="bg-white p-5 rounded-2xl shadow-md border">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-gray-700">{ review.userName }</span>
+                  <span className="text-yellow-500 font-bold">
+                    { '★'.repeat(review.rating) }{ '☆'.repeat(5 - review.rating) }
+                  </span>
+                </div>
+                <div className="text-sm text-gray-600 mb-2">
+                  Квітка: <span className="font-medium text-gray-800">{ review.flowerName }</span>
+                </div>
+                <p className="text-gray-700 text-sm">{ review.comment }</p>
+              </div>
             ))
           }
         </div>
