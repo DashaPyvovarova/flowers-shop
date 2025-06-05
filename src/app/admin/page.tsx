@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import CategoriesTab from 'components/admin/CategoriesTab/CategoriesTab';
 import FlowersTab from 'components/admin/FlowersTab/FlowersTab';
-import OrdersTab from 'components/admin/OrdersTab';
+import OrdersTab from '../../components/admin/OrdersTab/OrdersTab';
 import ReviewsTab from 'components/admin/ReviewsTab/ReviewsTab';
 import UsersTab from 'components/admin/UsersTab/UsersTab';
 
