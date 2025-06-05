@@ -9,7 +9,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const required = ['category_id', 'title', 'description', 'price', 'picture', 'isHidden'];
+  const required = ['categoryId', 'title', 'description', 'price', 'picture', 'isHidden'];
   const missing = required.filter((key) => body[key] === undefined);
   if (missing.length) return new Response(`Missing: ${missing.join(', ')}`, { status: 400 });
 
