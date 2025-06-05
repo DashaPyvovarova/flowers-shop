@@ -3,6 +3,7 @@ import { compare } from 'bcryptjs';
 import { eq, or } from 'drizzle-orm';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import { db } from '../../database/drizzle';
 import { users } from '../../database/schema';
 
@@ -49,6 +50,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: user[0].role.toString(),
         };
       },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   pages: {
