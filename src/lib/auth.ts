@@ -3,6 +3,7 @@ import { compare } from 'bcryptjs';
 import { eq, or } from 'drizzle-orm';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import { db } from '../../database/drizzle';
 import { users } from '../../database/schema';
 
@@ -50,11 +51,40 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
   ],
   pages: {
     signIn: '/login',
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === 'google') {
+        const { email, name } = user;
+
+        if (!email) return false;
+
+        const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
+
+        if (existing.length === 0) {
+          await db.insert(users).values({
+            login: name as string,
+            email,
+            password: '',
+            role: 'User',
+          });
+        }
+
+        user.id = existing[0].id;
+        user.login = existing[0].login;
+        user.email = existing[0].email;
+        user.role = existing[0].role;
+      }
+
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;

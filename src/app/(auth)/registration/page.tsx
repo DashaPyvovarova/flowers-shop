@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { signUp } from 'basics/actions/auth';
 import { successToast, warningToast } from 'basics/utils/toast';
@@ -113,6 +114,17 @@ export default function RegistrationPage() {
             </button>
           </div>
         </form>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={ () => signIn('google') }
+            className="flex w-full justify-center rounded-md bg-white border border-gray-300 px-3 py-1.5 text-sm font-semibold
+      text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600"
+          >
+            Зареєструватись через Google
+          </button>
+        </div>
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Вже маєте акаунт?{ ' ' }
