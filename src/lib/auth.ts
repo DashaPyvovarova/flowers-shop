@@ -60,6 +60,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: '/login',
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === 'google') {
+        const { email, name } = user;
+
+        if (!email) return false;
+
+        const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
+
+        if (existing.length === 0) {
+          await db.insert(users).values({
+            login: name as string,
+            email,
+            password: '',
+            role: 'User',
+          });
+        }
+
+        user.id = existing[0].id;
+        user.login = existing[0].login;
+        user.email = existing[0].email;
+        user.role = existing[0].role;
+      }
+
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
