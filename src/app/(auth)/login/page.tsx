@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { signInWithCredentials } from 'basics/actions/auth';
 import { successToast, warningToast } from 'basics/utils/toast';
-import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
   const router = useRouter();
