@@ -30,7 +30,7 @@ export default function AddressForm() {
     getAddressByUserId(currentUserId)
       .then((address) => {
         if (address) {
-          const { id, userId, ...rest } = address;
+          const { id, ...rest } = address;
           setForm(rest);
           setAddressId(id);
         }

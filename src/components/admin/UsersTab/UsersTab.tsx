@@ -1,5 +1,6 @@
 'use client';
 
+import { hash } from 'bcryptjs';
 import { useEffect, useState } from 'react';
 import UserForm from './UsersForm';
 import {
@@ -9,7 +10,6 @@ import {
   deleteUser,
   User,
 } from 'lib/api/users';
-import { hash } from 'bcryptjs';
 
 export default function UsersTab() {
   const [users, setUsers] = useState<User[]>([]);
