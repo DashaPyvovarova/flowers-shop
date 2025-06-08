@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "tsc --noEmit && eslint \"*/**/*.{js,ts,tsx}\" --max-warnings=0",
     "ci:lint": "eslint \"*/**/*.{js,ts,tsx}\" --quiet",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "db:generate": "npx drizzle-kit generate",
     "db:migrate": "npx drizzle-kit migrate",
     "db:studio": "npx drizzle-kit studio"
